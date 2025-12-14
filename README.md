@@ -1,4 +1,4 @@
-# 📝 Multi-User Todo List API (Backend)
+#  Multi-User Todo List API (Backend)
 
 A beginner-friendly backend project built using Node.js, Express, and MongoDB.
 This API allows multiple users to manage their own todos securely.
@@ -8,7 +8,7 @@ Authentication is handled using JSON Web Tokens (JWT).
 
 ---
 
-## 🚀 Features
+## Features
 
 - User Signup & Login (JWT Authentication)
 - Create Todo
@@ -21,7 +21,7 @@ Authentication is handled using JSON Web Tokens (JWT).
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 - **Node.js** – Runtime environment
 - **Express.js** – Web framework
