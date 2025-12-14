@@ -1,7 +1,5 @@
 const {Router} = require("express")
 const todoroute = Router()
-const jwt = require("jsonwebtoken")
-const JWT_TODO = process.env.JWT_TODO
 
 const mongoose = require("mongoose")
 const {z} = require("zod")
@@ -10,7 +8,7 @@ const { todoauth } = require("../middleware/todo")
 
 mongoose.connect(process.env.MONGO_URL)
 
-todoroute.post("/todo", todoauth,async function(req,res){
+todoroute.post("/create", todoauth,async function(req,res){
     const reqbody = z.object({
         title : z.string(),
         description : z.string()
@@ -39,3 +37,18 @@ todoroute.post("/todo", todoauth,async function(req,res){
     
     
 })
+
+todoroute.get("/me",todoauth,async function(req,res){
+    const userid = req.userid
+    const todos = await todomodel.find({
+        userid
+    })
+    res.json({
+        msg : "ALL TODOS ARE :-",
+        todos 
+    })
+})
+
+module.exports = {
+    todoroute
+}
