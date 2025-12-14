@@ -1,5 +1,5 @@
-const {Route} = require("express")
-const userroute = Route()
+const {Router} = require("express")
+const userroute = Router()
 const jwt = require("jsonwebtoken")
 const JWT_USER = process.env.JWT_USER
 const bcrypt = require("bcrypt")
@@ -7,6 +7,9 @@ const saltround = 10
 const mongoose = require("mongoose")
 const {z} = require("zod")
 const { usermodel } = require("../config/db")
+const { userauth } = require("../middleware/user")
+
+mongoose.connect(process.env.MONGO_URL)
 
 
 userroute.post("/signup" , async function(req,res){
@@ -15,19 +18,20 @@ userroute.post("/signup" , async function(req,res){
         password : z.string(),
         name : z.string()
     })
-    const parsedatawithsucess = reqbody.safeParse()
+    const parsedatawithsucess = reqbody.safeParse(req.body)
     if(!parsedatawithsucess.success){
         res.json({
             msg : "INCORRECT FORMAT",
             error : parsedatawithsucess.error
         })
+        console.log(req.body);
         return
     }
     const email = req.body.email
     const password = req.body.password
     const name = req.body.name
 
-    const hash_password = bcrypt.hash(password,saltround)
+    const hash_password = await bcrypt.hash(password,saltround)
     await usermodel.create({
         email,
         password : hash_password,
@@ -36,6 +40,7 @@ userroute.post("/signup" , async function(req,res){
     res.json({
         msg : "SIGNUP SUCESS"
     })
+    
 })
 
 userroute.post("/signin" , async function(req,res){
@@ -51,7 +56,7 @@ userroute.post("/signin" , async function(req,res){
         })
         return
     }
-    const password_match = bcrypt.compare(password,exist_user.password)
+    const password_match = await bcrypt.compare(password,exist_user.password)
     if(password_match){
         const token = jwt.sign({
             userid : exist_user._id
@@ -65,6 +70,10 @@ userroute.post("/signin" , async function(req,res){
         })
     }
 })
-userroute.get("/todo" , async function(req,res){
+userroute.get("/todo" ,userauth, async function(req,res){
 
 })
+
+module.exports = {
+    userroute
+}
