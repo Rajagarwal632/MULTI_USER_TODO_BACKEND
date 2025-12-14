@@ -70,9 +70,6 @@ userroute.post("/signin" , async function(req,res){
         })
     }
 })
-userroute.get("/todo" ,userauth, async function(req,res){
-
-})
 
 module.exports = {
     userroute
