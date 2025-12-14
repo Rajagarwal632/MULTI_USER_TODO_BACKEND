@@ -88,6 +88,26 @@ todoroute.put("/todo/:id",todoauth,async function(req,res){
     }
 
 })
+todoroute.delete("/todo/:id",todoauth,async function(req,res){
+    const todoid = req.params.id
+    const userid = req.userid
+
+    const mytodo_delete = await todomodel.findOneAndDelete({
+        _id : todoid,
+        userid : userid 
+    })
+    if (!mytodo_delete){
+        res.json({
+            msg : "TODO NOT FOUND"
+        })
+    }else{
+        res.json({
+            msg : "TODO DELETED SUCCESSFULLY"
+        })
+    }
+
+})
+
 
 module.exports = {
     todoroute
