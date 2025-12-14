@@ -1,6 +1,7 @@
 const {Route} = require("express")
 const userroute = Route()
 const jwt = require("jsonwebtoken")
+const JWT_USER = process.env.JWT_USER
 const bcrypt = require("bcrypt")
 const saltround = 10
 const mongoose = require("mongoose")
@@ -38,7 +39,31 @@ userroute.post("/signup" , async function(req,res){
 })
 
 userroute.post("/signin" , async function(req,res){
-    
+    const email = req.body.email
+    const password = req.body.password
+
+    const exist_user = await usermodel.findOne({
+        email
+    })
+    if(!exist_user){
+        res.json({
+            msg : "USER NOT FOUND"
+        })
+        return
+    }
+    const password_match = bcrypt.compare(password,exist_user.password)
+    if(password_match){
+        const token = jwt.sign({
+            userid : exist_user._id
+        },JWT_USER)
+        res.json({
+            token : token
+        })
+    }else{
+        res.json({
+            msg : "INCORRECT PASSWORD"
+        })
+    }
 })
 userroute.get("/todo" , async function(req,res){
 
